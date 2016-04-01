@@ -5,14 +5,7 @@ node-red-contrib-astrodata
 
 This package contains two node-red nodes to calculate astronomical data for a given position.
 
-
-This is an extented version of tlindener/node-red-contrib-rcswitch with support of different switch types, tristate and binary strings.
-
-The implementation based on https://github.com/marvinroger/node-rcswitch. The supported switch types are described there.
-
-Node bindings for the [rcswitch RaspberryPi port (pin)](https://github.com/r10r/rcswitch-pi).
-
-It should be compatible with all versions of Node.js starting from 0.10.x.
+The implementation based on the algorithm of http://lexikon.astronomie.info/java/sunmoon/sunmoon.html. Thanks to Mr. Arnold Barmettler for permission to use these algorithms for these nodes.
 
 ## Requirements
 
