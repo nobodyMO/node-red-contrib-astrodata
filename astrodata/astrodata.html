@@ -1,0 +1,163 @@
+<!--
+  Copyright 2015 Markus Korporal.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+
+<script type="text/x-red" data-template-name="astrodata dayvalues">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-lon"><i class="fa fa-tag"></i> Longitude</label>
+        <input type="text" id="node-input-lon" placeholder="lon">
+    </div>
+    <div class="form-row">
+        <label for="node-input-lat"><i class="fa fa-tag"></i> Latitude</label>
+        <input type="text" id="node-input-lat" placeholder="lat">
+    </div>
+    <div class="form-row">
+        <label for="node-input-height"><i class="fa fa-tag"></i> Height</label>
+        <input type="text" id="node-input-height" placeholder="height">
+    </div>
+
+</script>
+
+<script type="text/x-red" data-help-name="astrodata dayvalues">
+    <p>Calculates astonomical data for the current day. Set longitude and Latitude of the place in decimal form and height of the place in meters in the properties dialog.</p>
+    <p>The msg object also contains the attributs
+<b>msg.sunAstronomicalTwilightMorning</b>,
+<b>msg.sunNauticalTwilightMorning</b>,
+<b>msg.sunCivilTwilightMorning</b>,
+<b>msg.sunRise</b>,
+<b>msg.sunTransit</b>,
+<b>msg.sunSet</b>,
+<b>msg.sunCivilTwilightEvening</b>,
+<b>msg.sunNauticalTwilightEvening</b>,
+<b>msg.sunAstronomicalTwilightEvening</b>,
+<b>msg.sunSign</b>,
+<b>msg.moonRise</b>,
+<b>msg.mondkulmination</b>,
+<b>msg.moonSet</b> ,
+<b>msg.moonPhaseNumber</b>,
+<b>msg.moonPhase</b> and
+<b>msg.moonSign</b>.</p>
+
+<p>The msg object also contains the attributs
+<b>msg.sunDistance</b> in km.
+<b>msg.sunDistanceObserver</b> in km
+<b>msg.sunDeclination</b> in Grad
+<b>msg.sunAzimut</b> in Grad
+<b>msg.sunAltitude</b> in Grad
+<b>msg.sunDiameter</b>
+<b>msg.moonDistance</b> in km
+<b>msg.moonDistanceObserver</b> in km
+<b>msg.moonDeclination</b> in Grad
+<b>msg.moonAzimut</b> in Grad
+<b>msg.moonAltitude</b> in Grad
+<b>msg.moonDiameter</b> and
+<b>msg.MoonAge</b> in Grad 
+for the current time.</p>
+<p>
+All other attributes ob the input msg object will be passed to the output msg object.</p>
+</script>
+
+<script type="text/javascript">
+RED.nodes.registerType('astrodata dayvalues',{
+        category: 'function',
+        defaults: {
+            name: {value:""},
+            lon: {value:6.664795},
+			lat: {value:51.465308},
+           height: {value:0}
+         },
+        color:"#a8bfd8",
+        inputs:1,
+        outputs:1,
+        icon: "astrodata.png",
+ 		label:   function() {    // sets the default label contents
+                   return this.name||this.topic||"dayvalues";
+                 },
+        labelStyle: function() { // sets the class to apply to the label
+                   return this.name ? "node_label_italic": "";
+                 }
+
+    });
+</script>
+
+<script type="text/x-red" data-template-name="astrodata sunposition">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-lon"><i class="fa fa-tag"></i> Longitude</label>
+        <input type="text" id="node-input-lon" placeholder="lon">
+    </div>
+    <div class="form-row">
+        <label for="node-input-lat"><i class="fa fa-tag"></i> Latitude</label>
+        <input type="text" id="node-input-lat" placeholder="lat">
+    </div>
+    <div class="form-row">
+        <label for="node-input-height"><i class="fa fa-tag"></i> Height</label>
+        <input type="text" id="node-input-height" placeholder="height">
+    </div>
+
+</script>
+
+<script type="text/x-red" data-help-name="astrodata sunposition">
+    <p>Calculates sun position for the current time. Set longitude and Latitude of the place in decimal form and height of the place in meters in the properties dialog.</p>
+ Set longitude and Latitude of the place in decimal form in the properties dialog.</p>
+
+<p>The msg object also contains the attributs
+<b>msg.sunDistance</b> in km.
+<b>msg.sunDistanceObserver</b> in km
+<b>msg.sunDeclination</b> in Grad
+<b>msg.sunAzimut</b> in Grad
+<b>msg.sunAltitude</b> in Grad
+<b>msg.sunDiameter</b>
+<b>msg.moonDistance</b> in km
+<b>msg.moonDistanceObserver</b> in km
+<b>msg.moonDeclination</b> in Grad
+<b>msg.moonAzimut</b> in Grad
+<b>msg.moonAltitude</b> in Grad
+<b>msg.moonDiameter</b> and
+<b>msg.MoonAge</b> in Grad.
+All other attributes ob the input msg object will be passed to the output msg object.</p>
+</script>
+
+<script type="text/javascript">
+RED.nodes.registerType('astrodata sunposition',{
+        category: 'function',
+        defaults: {
+            name: {value:""},
+            lon: {value:6.664795},
+			lat: {value:51.465308},
+			height: {value:0}
+         },
+        color:"#a8bfd8",
+        inputs:1,
+        outputs:1,
+        icon: "astrodata.png",
+		label:   function() {    // sets the default label contents
+                   return this.name||this.topic||"sunposition";
+                 },
+        labelStyle: function() { // sets the class to apply to the label
+                   return this.name ? "node_label_italic": "";
+                 }
+		 });
+</script>
