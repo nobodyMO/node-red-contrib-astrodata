@@ -4,7 +4,6 @@
     "version"      : "0.0.1",
     "description"  : "Nodes for calculation of sun and moon position, sunset, sunrise etc.",
     "license"      : "(MIT OR Apache-2.0)",
-   ,
     "keywords": [ "node-red","astrodata" ],
     "node-red"     : {
         "nodes": {
