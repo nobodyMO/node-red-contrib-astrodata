@@ -13,7 +13,7 @@ The implementation based on the algorithm of http://lexikon.astronomie.info/java
 
 ## Description
 
-### astrodata dayvalues
+### Node astrodata dayvalues
 
 The node astrodata dayvalues calculates astonomical data for the current day. Set longitude and Latitude of the place in decimal form and height of the place in meters in the properties dialog.
 
@@ -51,7 +51,7 @@ for the current time.
 
 All other attributes ob the input msg object will be passed to the output msg object.
 
-### astrodata sunposition
+### Node astrodata sunposition
 
 The node astrodata sunposition calculates sun position for the current time. Set longitude and Latitude of the place in decimal form and height of the place in meters in the properties dialog.
 
