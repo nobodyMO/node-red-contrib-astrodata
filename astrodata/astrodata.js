@@ -729,13 +729,13 @@ module.exports = function(RED) {
 			msg.sunCivilTwilightEvening=HHMMSS(sunRise.cicilTwilightEvening);
 			msg.sunNauticalTwilightEvening=HHMMSS(sunRise.nauticalTwilightEvening);
 			msg.sunAstronomicalTwilightEvening=HHMMSS(sunRise.astronomicalTwilightEvening);
-			msg.sunSign=moonCoor.sign;
+			msg.sunSign=sunCoor.sign;
 			msg.moonRise=HHMMSS(moonRise.rise);
 			msg.moonTransit=HHMMSS(moonRise.transit);
 			msg.moonSet=HHMMSS(moonRise.set);
 			msg.moonPhaseNumber=round1000(moonCoor.phase);
 			msg.moonPhase=moonCoor.moonPhase;
-			msg.moonSign=sunCoor.sign;
+			msg.moonSign=moonCoor.sign;
 			msg.MoonAge=round1000(moonCoor.moonAge*RAD);
 
 
