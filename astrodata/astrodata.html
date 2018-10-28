@@ -33,11 +33,22 @@
         <label for="node-input-height"><i class="fa fa-tag"></i> Height</label>
         <input type="text" id="node-input-height" placeholder="height">
     </div>
-
+   <div class="form-row">
+        <label for="node-input-lang"><i class="fa fa-globe"></i> Language</label>
+        <select type="text" id="node-input-lang" style="width:74%;">
+            <option value="en">Englisch</option>
+            <option value="de">German</option>
+            <option value="fr">French</option>
+        </select>
+    </div>	
+    <div class="form-row">
+        <label for="node-input-offset"><i class="fa fa-adjust"></i> Offset</label>
+        <input type="text" id="node-input-offset" placeholder="offset">
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="astrodata dayvalues">
-    <p>Calculates astonomical data for the current day. Set longitude and Latitude of the place in decimal form and height of the place in meters in the properties dialog.</p>
+    <p>Calculates astonomical data for the current day. Set longitude and Latitude of the place in decimal form and height of the place in meters in the properties dialog. Select language if you want different lables than english. You can define an offset from now to calculate for a different day (number of days). The offset could also defined in msg.offset.</p>
     <p>The msg object also contains the attributs
 <b>msg.sunAstronomicalTwilightMorning</b>,
 <b>msg.sunNauticalTwilightMorning</b>,
@@ -82,7 +93,9 @@ RED.nodes.registerType('astrodata dayvalues',{
             name: {value:""},
             lon: {value:6.664795},
 			lat: {value:51.465308},
-           height: {value:0}
+           height: {value:0},
+		   lang: {value:"en", required:true},
+		   offset: {value:0, required:false}
          },
         color:"#a8bfd8",
         inputs:1,
@@ -116,12 +129,23 @@ RED.nodes.registerType('astrodata dayvalues',{
         <label for="node-input-height"><i class="fa fa-tag"></i> Height</label>
         <input type="text" id="node-input-height" placeholder="height">
     </div>
-
+   <div class="form-row">
+        <label for="node-input-lang"><i class="fa fa-globe"></i> Language</label>
+        <select type="text" id="node-input-lang" style="width:74%;">
+            <option value="en">Englisch</option>
+            <option value="de">German</option>
+            <option value="fr">French</option>
+        </select>
+    </div>	
+    <div class="form-row">
+        <label for="node-input-offset"><i class="fa fa-adjust"></i> Offset</label>
+        <input type="text" id="node-input-offsetb" placeholder="offset">
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="astrodata sunposition">
-    <p>Calculates sun position for the current time. Set longitude and Latitude of the place in decimal form and height of the place in meters in the properties dialog.</p>
- Set longitude and Latitude of the place in decimal form in the properties dialog.</p>
+    <p>Calculates sun position for the current time. Set longitude and Latitude of the place in decimal form and height of the place in meters in the properties dialog. </p>
+ <p>Set longitude and Latitude of the place in decimal form in the properties dialog. Select language if you want different lables than english. You can define an offset from now to calculate for a different day (number of days). The offset could also defined in msg.offset.</p>
 
 <p>The msg object also contains the attributs
 <b>msg.sunDistance</b> in km.
@@ -147,7 +171,9 @@ RED.nodes.registerType('astrodata sunposition',{
             name: {value:""},
             lon: {value:6.664795},
 			lat: {value:51.465308},
-			height: {value:0}
+			height: {value:0},
+		    lang: {value:"en", required:true},
+		    offset: {value:0, required:false}			
          },
         color:"#a8bfd8",
         inputs:1,
