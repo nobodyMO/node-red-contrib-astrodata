@@ -56,6 +56,7 @@ All other attributes ob the input msg object will be passed to the output msg ob
 The node astrodata sunposition calculates sun position for the current time. Set longitude and Latitude of the place in decimal form and height of the place in meters in the properties dialog.
 
 Set longitude and Latitude of the place in decimal form in the properties dialog.
+The moon phases and star signs support different languages (english, german and french). Set the target language in the properties dialog. Field offset or in **msg.offset** allows the calculation for different dates. An numeric value changes the date relative from now (Whole numbers for days).
 
 The msg object also contains the attributs 
 * **msg.sunDistance** in km
