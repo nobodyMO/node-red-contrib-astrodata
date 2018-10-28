@@ -14,7 +14,7 @@ module.exports = function(RED) {
     var RAD = 180./pi;
     var DeltaT=65;
     var emptyValue = "--";
-
+    
 	
     function sqr(x) {  return x*x;}
 
@@ -78,10 +78,13 @@ module.exports = function(RED) {
 	function round100(x) { return(Math.round(100.*x)/100.); }
 	function round10(x) { return(Math.round(10.*x)/10.); }
 		
-	function Sign(lon)
+	function Sign(lon,language)
 		{ 
-		var signs= new Array("Widder", "Stier", "Zwillinge", "Krebs", "Löwe", "Jungfrau", "Waage", "Skorpion", "Schütze", "Steinbock", "Wassermann", "Fische");
-		return( signs[Math.floor(lon*RAD/30)] );
+		var signs= {"en": ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"],
+		            "de": ["Widder", "Stier", "Zwillinge", "Krebs", "Löwe", "Jungfrau", "Waage", "Skorpion", "Schütze", "Steinbock", "Wassermann", "Fische"],
+					"fr": ["Bélier", "Taureau", "Gémeaux", "Cancer", "Lion", "Vierge", "Balance", "Scorpion", "Sagittaire", "Capricorne", "Verseau", "Poissons"]
+		};
+		return( signs [language][Math.floor(lon*RAD/30)] );
 		}
 	
 	// Calculate Julian date: valid only from 1.3.1901 to 28.2.2100
@@ -241,11 +244,11 @@ module.exports = function(RED) {
 	// Accurate to about 1-2 minutes
 	// recursive: 1 - calculate rise/set in UTC in a second run
 	// recursive: 0 - find rise/set on the current local day. This is set when doing the first call to this function
-	function SunRise(JD, deltaT, lon, lat, zone, recursive)
+	function SunRise(JD, deltaT, lon, lat, zone, recursive,language)
 		{
 		var jd0UT = Math.floor(JD-0.5)+0.5;   // JD at 0 hours UT
-		var coor1 = SunPosition(jd0UT+  deltaT/24./3600.);
-		var coor2 = SunPosition(jd0UT+1.+deltaT/24./3600.); // calculations for next day's UTC midnight
+		var coor1 = SunPosition(jd0UT+  deltaT/24./3600.,null,null,language);
+		var coor2 = SunPosition(jd0UT+1.+deltaT/24./3600.,null,null,language); // calculations for next day's UTC midnight
   
 		var risetemp = new Object();
 		var rise = new Object();
@@ -255,7 +258,7 @@ module.exports = function(RED) {
 			if (zone>0) {
 				// rise time was yesterday local time -> calculate rise time for next UTC day
 				if (rise.rise>=24-zone || rise.transit>=24-zone || rise.set>=24-zone) {
-					risetemp = SunRise(JD+1, deltaT, lon, lat, zone, 1);
+					risetemp = SunRise(JD+1, deltaT, lon, lat, zone, 1,language);
 					if (rise.rise>=24-zone) rise.rise = risetemp.rise;
 					if (rise.transit >=24-zone) rise.transit = risetemp.transit;
 					if (rise.set >=24-zone) rise.set  = risetemp.set;
@@ -264,7 +267,7 @@ module.exports = function(RED) {
 			else if (zone<0) {
 				// rise time was yesterday local time -> calculate rise time for next UTC day
 				if (rise.rise<-zone || rise.transit<-zone || rise.set<-zone) {
-					risetemp = SunRise(JD-1, deltaT, lon, lat, zone, 1);
+					risetemp = SunRise(JD-1, deltaT, lon, lat, zone, 1,language);
 					if (rise.rise<-zone) rise.rise = risetemp.rise;
 					if (rise.transit<-zone) rise.transit = risetemp.transit;
 					if (rise.set <-zone) rise.set  = risetemp.set;
@@ -301,17 +304,17 @@ module.exports = function(RED) {
 	// recursive: 1 - calculate rise/set in UTC
 	// recursive: 0 - find rise/set on the current local day (set could also be first)
 	// returns '' for moonrise/set does not occur on selected day
-	function MoonRise(JD, deltaT, lon, lat, zone, recursive)
+	function MoonRise(JD, deltaT, lon, lat, zone, recursive,language)
 		{
 		var timeinterval = 0.5;
   
 		var jd0UT = Math.floor(JD-0.5)+0.5;   // JD at 0 hours UT
-		var suncoor1 = SunPosition(jd0UT+ deltaT/24./3600.);
-		var coor1 = MoonPosition(suncoor1, jd0UT+ deltaT/24./3600.);
+		var suncoor1 = SunPosition(jd0UT+ deltaT/24./3600.,null,null,language);
+		var coor1 = MoonPosition(suncoor1, jd0UT+ deltaT/24./3600.,null,null,language);
 
-		var suncoor2 = SunPosition(jd0UT +timeinterval + deltaT/24./3600.); // calculations for noon
+		var suncoor2 = SunPosition(jd0UT +timeinterval + deltaT/24./3600.,null,null,language); // calculations for noon
 		// calculations for next day's midnight
-		var coor2 = MoonPosition(suncoor2, jd0UT +timeinterval + deltaT/24./3600.); 
+		var coor2 = MoonPosition(suncoor2, jd0UT +timeinterval + deltaT/24./3600.,null,null,language); 
   
 		var risetemp = new Object();
 		var rise = new Object();
@@ -323,7 +326,7 @@ module.exports = function(RED) {
 		if (!recursive) { // check and adjust to have rise/set time on local calendar day
 			if (zone>0) {
 				// recursive call to MoonRise returns events in UTC
-				var riseprev = MoonRise(JD-1., deltaT, lon, lat, zone, 1); 
+				var riseprev = MoonRise(JD-1., deltaT, lon, lat, zone, 1,language); 
       
 				// recursive call to MoonRise returns events in UTC
 				//risenext = MoonRise(JD+1, deltaT, lon, lat, zone, 1);
@@ -356,7 +359,7 @@ module.exports = function(RED) {
 			else if (zone<0) {
 				// rise/set time was tomorrow local time -> calculate rise time for former UTC day
 				if (rise.rise<-zone || rise.set<-zone || rise.transit<-zone) { 
-					risetemp = MoonRise(JD+1., deltaT, lon, lat, zone, 1);
+					risetemp = MoonRise(JD+1., deltaT, lon, lat, zone, 1,language);
         
 					if (rise.rise < -zone) {
 						if (risetemp.rise > -zone) 
@@ -502,7 +505,7 @@ module.exports = function(RED) {
 	// Calculate coordinates for Sun
 	// Coordinates are accurate to about 10s (right ascension) 
 	// and a few minutes of arc (declination)
-	function SunPosition(TDT, geolat, lmst)
+	function SunPosition(TDT, geolat, lmst,language)
 		{
 		var D = TDT-2447891.5;
   
@@ -532,14 +535,14 @@ module.exports = function(RED) {
 			sunCoor = Equ2Altaz(sunCoor, TDT, geolat, lmst);
 			}
   
-		sunCoor.sign = Sign(sunCoor.lon);
+		sunCoor.sign = Sign(sunCoor.lon,language);
 		return sunCoor;
 		}
 
 
 	// Calculate data and coordinates for the Moon
 	// Coordinates are accurate to about 1/5 degree (in ecliptic coordinates)
-	function MoonPosition(sunCoor, TDT, observer, lmst)
+	function MoonPosition(sunCoor, TDT, observer, lmst,language)
 		{
 		var D = TDT-2447891.5;
   
@@ -596,16 +599,19 @@ module.exports = function(RED) {
 		moonCoor.moonAge = Mod2Pi(l3-sunCoor.lon);   
 		moonCoor.phase   = 0.5*(1-Math.cos(moonCoor.moonAge)); // Moon phase, 0-1
   
-		var phases = new Array("Neumond", "Zunehmende Sichel", "Erstes Viertel", "Zunehmender Mond", "Vollmond", "Abnehmender Mond", "Letztes Viertel", "Abnehmende Sichel", "Neumond");
+		var phases = {"en" : ["New moon", "Increasing sickle", "First quarter", "Increasing moon", "Full moon", "Decreasing moon", "Last quarter", "Decreasing sickle", "New moon"],
+			          "de" : ["Neumond", "Zunehmende Sichel", "Erstes Viertel", "Zunehmender Mond", "Vollmond", "Abnehmender Mond", "Letztes Viertel", "Abnehmende Sichel", "Neumond"],
+					  "fr" : ["Nouvelle lune", "Premier croissant", "Premier quartier", "Lune gibbeuse croissante", "Pleine lune", "Lune gibbeuse décroissante", "Dernier quartier", "Dernier croissant", "Nouvelle lune"]};
 		var mainPhase = 1./29.53*360*DEG; // show 'Newmoon, 'Quarter' for +/-1 day arond the actual event
 		var p = Mod(moonCoor.moonAge, 90.*DEG);
 		if (p < mainPhase || p > 90*DEG-mainPhase) 
 			p = 2*Math.round(moonCoor.moonAge / (90.*DEG));
 		else 
 			p = 2*Math.floor(moonCoor.moonAge / (90.*DEG))+1;
-		moonCoor.moonPhase = phases[p];
+		
+		moonCoor.moonPhase = phases[language][p];
   
-		moonCoor.sign = Sign(moonCoor.lon);
+		moonCoor.sign = Sign(moonCoor.lon,language);
 
 		return(moonCoor);
 		}		
@@ -618,14 +624,19 @@ module.exports = function(RED) {
         node.lon = parseFloat (n.lon);
         node.lat = parseFloat (n.lat);
 		node.height = parseFloat (n.height);
+		node.lang = n.lang || "en";
+		node.offset = parseFloat (n.offset) || 0;
 		
 	   
 	   
 	    node.on("input", function(msg) {
 			var d = new Date();
+			var offset = node.offset;
+			if (msg.offset && typeof msg.offset=="number") offset = msg.offset;
+			if (offset!=0) d.setDate(d.getDate() + offset);
 			var JD0 = CalcJD(d.getUTCDate(),d.getUTCMonth() + 1, d.getUTCFullYear() );
-			node.log ("JD0: " + JD0 + "Datum:" + d + " TZ Offset: " + d.getTimezoneOffset());
-			node.log ("UTC Tag: " + d.getUTCDate() + "UTC Monat:" + (d.getUTCMonth() +1)  + " UTC Jahr:" + d.getUTCFullYear() + " UTC Stunde:" + d.getUTCHours() + " UTC Minute:" + d.getUTCMinutes() + " UTC Sekunde:" + d.getUTCSeconds() );
+			node.log ("JD0: " + JD0 + "Date:" + d + " TZ Offset: " + d.getTimezoneOffset() + " User Offset: " + offset);
+			node.log ("UTC Day: " + d.getUTCDate() + "UTC Month:" + (d.getUTCMonth() +1)  + " UTC Year:" + d.getUTCFullYear() + " UTC Hour:" + d.getUTCHours() + " UTC Minute:" + d.getUTCMinutes() + " UTC Second:" + d.getUTCSeconds() );
 			var JD  = JD0 +( d.getUTCHours() + d.getUTCMinutes()/60. + d.getUTCSeconds () /3600.) /24.;
 			node.log ("JD: " + JD);
             node.log ("DeltaT: " + DeltaT);
@@ -640,8 +651,8 @@ module.exports = function(RED) {
 			
 			var observerCart = Observer2EquCart(lon, lat, height, gmst); // geocentric cartesian coordinates of observer
  
-            var sunCoor  = SunPosition(TDT, lat, lmst*15.*DEG);   // Calculate data for the Sun at given time
-            var moonCoor = MoonPosition(sunCoor, TDT, observerCart, lmst*15.*DEG);    // Calculate data for the Moon at given time
+            var sunCoor  = SunPosition(TDT, lat, lmst*15.*DEG,node.lang);   // Calculate data for the Sun at given time
+            var moonCoor = MoonPosition(sunCoor, TDT, observerCart, lmst*15.*DEG,node.lang);    // Calculate data for the Moon at given time
 
 
             // Calculate distance from the observer (on the surface of earth) to the center of the sun
@@ -653,7 +664,6 @@ module.exports = function(RED) {
 			// Calculate distance from the observer (on the surface of earth) to the center of the moon
 			var moonCart      = EquPolar2Cart(moonCoor.raGeocentric, moonCoor.decGeocentric, moonCoor.distance); 
 
-			//var moonRise = MoonRise(JD0, DeltaT, lon, lat, d.getTimezoneOffset() / -60., 0);
 
 			
 			msg.sunDistance=round10(sunCoor.distance);
@@ -682,13 +692,19 @@ module.exports = function(RED) {
         node.lon = parseFloat (n.lon);
         node.lat = parseFloat (n.lat);
 		node.height = parseFloat (n.height);
+		node.lang = n.lang || "en";
+		node.offset = parseFloat (n.offset) || 0;
 		
-	   
+
 	   
 	    node.on("input", function(msg) {
 			var d = new Date();
+			var offset = node.offset;
+			if (msg.offset && typeof msg.offset=="number") offset = msg.offset;
+			if (offset!=0) d.setDate(d.getDate() + offset);
+			
 			var JD0 = CalcJD(d.getUTCDate(),d.getUTCMonth() + 1, d.getUTCFullYear() );
-			node.log ("JD0: " + JD0 + "Datum:" + d + " TZ Offset: " + d.getTimezoneOffset());
+			node.log ("JD0: " + JD0 + "Datum:" + d + " TZ Offset: " + d.getTimezoneOffset()  + " User Offset: " + offset);
 			node.log ("UTC Tag: " + d.getUTCDate() + "UTC Monat:" + (d.getUTCMonth() +1)  + " UTC Jahr:" + d.getUTCFullYear() + " UTC Stunde:" + d.getUTCHours() + " UTC Minute:" + d.getUTCMinutes() + " UTC Sekunde:" + d.getUTCSeconds() );
 			var JD  = JD0 +( d.getUTCHours() + d.getUTCMinutes()/60. + d.getUTCSeconds () /3600.) /24.;
 			node.log ("JD: " + JD);
@@ -704,20 +720,20 @@ module.exports = function(RED) {
 			
 			var observerCart = Observer2EquCart(lon, lat, height, gmst); // geocentric cartesian coordinates of observer
  
-            var sunCoor  = SunPosition(TDT, lat, lmst*15.*DEG);   // Calculate data for the Sun at given time
-            var moonCoor = MoonPosition(sunCoor, TDT, observerCart, lmst*15.*DEG);    // Calculate data for the Moon at given time
+            var sunCoor  = SunPosition(TDT, lat, lmst*15.*DEG,node.lang);   // Calculate data for the Sun at given time
+            var moonCoor = MoonPosition(sunCoor, TDT, observerCart, lmst*15.*DEG,node.lang);    // Calculate data for the Moon at given time
 
 
             // Calculate distance from the observer (on the surface of earth) to the center of the sun
             var sunCart      = EquPolar2Cart(sunCoor.ra, sunCoor.dec, sunCoor.distance);
 
             // JD0: JD of 0h UTC time
-            var sunRise = SunRise(JD0, DeltaT, lon, lat, d.getTimezoneOffset() / -60., 0);
+            var sunRise = SunRise(JD0, DeltaT, lon, lat, d.getTimezoneOffset() / -60., 0,node.lang);
 
 			// Calculate distance from the observer (on the surface of earth) to the center of the moon
 			var moonCart      = EquPolar2Cart(moonCoor.raGeocentric, moonCoor.decGeocentric, moonCoor.distance); 
 
-			var moonRise = MoonRise(JD0, DeltaT, lon, lat, d.getTimezoneOffset() / -60., 0);
+			var moonRise = MoonRise(JD0, DeltaT, lon, lat, d.getTimezoneOffset() / -60., 0,node.lang);
 
   				       	
 			msg.sunAstronomicalTwilightMorning=HHMMSS(sunRise.astronomicalTwilightMorning);
