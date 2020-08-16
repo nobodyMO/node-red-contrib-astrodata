@@ -1,5 +1,5 @@
 <!--
-  Copyright 2015 Markus Korporal.
+  Copyright 2015,2020 Markus Korporal.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@
 
 <script type="text/x-red" data-help-name="astrodata dayvalues">
     <p>Calculates astonomical data for the current day. Set longitude and Latitude of the place in decimal form and height of the place in meters in the properties dialog. Select language if you want different lables than english. You can define an offset from now to calculate for a different day (number of days). The offset could also defined in msg.offset.</p>
+	<p>You can overwrite longitude and latitude in in incomming message object with <b>msg.lat</b> and <b>msg.lon</b>.	
     <p>The msg object also contains the attributs
 <b>msg.sunAstronomicalTwilightMorning</b>,
 <b>msg.sunNauticalTwilightMorning</b>,
@@ -144,7 +145,8 @@ RED.nodes.registerType('astrodata dayvalues',{
 </script>
 
 <script type="text/x-red" data-help-name="astrodata sunposition">
-    <p>Calculates sun position for the current time. Set longitude and Latitude of the place in decimal form and height of the place in meters in the properties dialog. </p>
+    <p>Calculates sun position for the current time. Set longitude and latitude of the place in decimal form and height of the place in meters in the properties dialog. </p>
+	<p>You can overwrite longitude and latitude in in incomming message object with <b>msg.lat</b> and <b>msg.lon</b>.
  <p>Set longitude and Latitude of the place in decimal form in the properties dialog. Select language if you want different lables than english. You can define an offset from now to calculate for a different day (number of days). The offset could also defined in msg.offset.</p>
 
 <p>The msg object also contains the attributs
