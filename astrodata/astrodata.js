@@ -642,7 +642,10 @@ module.exports = function(RED) {
             node.log ("DeltaT: " + DeltaT);
 			var TDT = JD + DeltaT /24./3600.;
 			var lat      = node.lat * DEG; // geodetic latitude of observer on WGS84
-			var lon      = node.lon * DEG; // latitude of observer
+			if (!Number.isNaN(Number.parseFloat(msg.lat))) lat= Number.parseFloat(msg.lat)* DEG;
+			var lon      = node.lon * DEG; // longitude of observer
+			if (!Number.isNaN(Number.parseFloat(msg.lon))) lon= Number.parseFloat(msg.lon)* DEG;
+			
 			var height   = node.height * 0.001; // altiude of observer in meters above WGS84 ellipsoid (and converted to kilometers)
 			var gmst = GMST(JD);
             node.log ("gmst: " + HHMMSS(gmst));
@@ -711,7 +714,10 @@ module.exports = function(RED) {
             node.log ("DeltaT: " + DeltaT);
 			var TDT = JD + DeltaT /24./3600.;
 			var lat      = node.lat * DEG; // geodetic latitude of observer on WGS84
-			var lon      = node.lon * DEG; // latitude of observer
+			if (!Number.isNaN(Number.parseFloat(msg.lat))) lat= Number.parseFloat(msg.lat)* DEG;
+			var lon      = node.lon * DEG; // longitude of observer
+			if (!Number.isNaN(Number.parseFloat(msg.lon))) lon= Number.parseFloat(msg.lon)* DEG;
+			
 			var height   = node.height * 0.001; // altiude of observer in meters above WGS84 ellipsoid (and converted to kilometers)
 			var gmst = GMST(JD);
             node.log ("gmst: " + HHMMSS(gmst));
